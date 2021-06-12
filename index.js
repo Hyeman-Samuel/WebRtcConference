@@ -1,6 +1,7 @@
 var http = require("http")
 var Express = require("express")
 var fs = require("fs")
+const { env } = require("process")
 var app = Express()
 app.use(Express.static(__dirname+"/public"))
 var server=http.createServer(app)
@@ -11,7 +12,7 @@ io.sockets.on("error", (e) => {
     console.log(e)
 })
 
-server.listen(3000,()=>{
+server.listen(process.env.PORT,()=>{
 console.log("connected")
 })
 
