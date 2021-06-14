@@ -9,12 +9,12 @@ const config = {
 
 const socket = io.connect(window.location.origin);
 const video = document.querySelector("video");
-
+document.querySelector("video").controls = false;
 // Media contrains
 const constraints = {
   video: { facingMode: "user" },
   // Uncomment to enable audio
-  audio: true
+  //audio: true
 };
 
 navigator.mediaDevices

@@ -9,7 +9,10 @@ const config = {
 
 const socket = io.connect(window.location.origin);
 const video = document.querySelector("video");
-
+//document.getElementById("PlayButton").addEventListener("click",)
+document.querySelector("#PlayButton").addEventListener("click",function(e){
+  document.querySelector("video").play();
+})
 
 
 socket.on("offer", (id, description) => {
@@ -24,8 +27,7 @@ socket.on("offer", (id, description) => {
     peerConnection.ontrack = event => {
       
         document.querySelector("video").srcObject =  event.streams[0];
-        document.querySelector("video").autoplay = true
-        document.querySelector("video").playsInline = true
+        document.querySelector("video").controls = false;
     };
     peerConnection.onicecandidate = event => {
       if (event.candidate) {
