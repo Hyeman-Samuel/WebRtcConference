@@ -34,6 +34,13 @@ socket.on("offer", (id, description) => {
         socket.emit("candidate", id, event.candidate);
       }
     };
+
+    peerConnection.oniceconnectionstatechange = event =>{
+      if(peerConnection.iceConnectionState == 'disconnected') {
+        document.querySelector("video").srcObject = null;
+        document.querySelector("#PlayButton").innerHTML = "The Meeting has ended"
+    }
+    }
   });
 
 
