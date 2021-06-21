@@ -59,7 +59,7 @@ socket.on("offer", (id, description,room) => {
   });
 
   socket.on("watcherleft", () => {
-   console.log("user left")
+   //console.log("user left")
   });
   
   window.onunload = window.onbeforeunload = () => {

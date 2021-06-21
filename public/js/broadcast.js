@@ -62,7 +62,7 @@ navigator.mediaDevices
   
 
   socket.on("disconnectPeer", id => {
-    console.log("user left")
+    //console.log("user left")
     socket.emit("leave",room);
     peerConnections[id].close();
 
