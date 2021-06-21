@@ -16,12 +16,12 @@ const constraints = {
   // Uncomment to enable audio
   //audio: true
 };
-
+var room = "myroom"
 navigator.mediaDevices
   .getUserMedia(constraints)
   .then(stream => {
     video.srcObject = stream;
-    socket.emit("broadcaster");
+    socket.emit("broadcaster",room);
   })
   .catch(error => console.error(error));
 
@@ -46,7 +46,7 @@ navigator.mediaDevices
       .createOffer()
       .then(sdp => peerConnection.setLocalDescription(sdp))
       .then(() => {
-        socket.emit("offer", id, peerConnection.localDescription);
+        socket.emit("offer", id, peerConnection.localDescription,room);
       });
   });
 
@@ -59,11 +59,13 @@ navigator.mediaDevices
   socket.on("candidate", (id, candidate) => {
     peerConnections[id].addIceCandidate(new RTCIceCandidate(candidate));
   });
-
-
+  
 
   socket.on("disconnectPeer", id => {
+    console.log("user left")
+    socket.emit("leave",room);
     peerConnections[id].close();
+
     delete peerConnections[id];
   });
 

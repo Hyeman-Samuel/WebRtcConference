@@ -15,14 +15,14 @@ document.querySelector("#PlayButton").addEventListener("click",function(e){
 })
 
 
-socket.on("offer", (id, description) => {
+socket.on("offer", (id, description,room) => {
     peerConnection = new RTCPeerConnection(config);
     peerConnection
       .setRemoteDescription(description)
       .then(() => peerConnection.createAnswer())
       .then(sdp => peerConnection.setLocalDescription(sdp))
       .then(() => {
-        socket.emit("answer", id, peerConnection.localDescription);
+        socket.emit("answer", id, peerConnection.localDescription,room);
       });
     peerConnection.ontrack = event => {
       
@@ -56,6 +56,10 @@ socket.on("offer", (id, description) => {
   
   socket.on("broadcaster", () => {
     socket.emit("watcher");
+  });
+
+  socket.on("watcherleft", () => {
+   console.log("user left")
   });
   
   window.onunload = window.onbeforeunload = () => {
