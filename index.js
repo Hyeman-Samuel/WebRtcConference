@@ -1,20 +1,31 @@
-var http = require("http")
-var Express = require("express")
-var fs = require("fs")
-var app = Express()
-app.use(Express.static(__dirname+"/public"))
-var server=http.createServer(app)
+var createExpressApp = require("./startup/createApplication")
+var handlebars = require("./startup/useHandleBars")
+const {Logger} = require("./utility/logger")
 var io = require("./utility/socker.io")
-io(server)
+var http = require("http") 
+var app = createExpressApp()
+var Server = http.createServer(app)
+if (process.env.NODE_ENV !== 'production') {
+    Logger.SetConsoleLogger()
+    }
 
-server.listen(process.env.PORT,()=>{
-console.log("connected")
-})
-app.use("/broadcast",function(req,res){
-    res.end(fs.readFileSync(__dirname+"/public/broadcaster.html"))
+    process.on('uncaughtException',(ex)=>{
+        Logger.error(ex.message,ex)
+      })
+
+io(Server)
+handlebars(app,__dirname)
+
+
+
+
+const room = require("./routes/room")
+    
+    
+app.use("/room",room)
+
+Server.listen(app.get('port'),function(){
+    Logger.info(`server listening on port ${app.get('port')}`)
 });
-app.use("/watch",function(req,res){
-    res.end(fs.readFileSync(__dirname+"/public/viewer.html"))
-})
-
+//app.listen(app.get('port'), function() {});
 
