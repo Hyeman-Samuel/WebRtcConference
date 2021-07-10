@@ -1,12 +1,26 @@
 const Express = require('express');
 const Router = Express.Router();
+const {Room} = require("../models/room")
+const {TokenChecker} = require("../utility/auth")
+const { v4: uuidv4 } = require('uuid');
+Router.post("/",TokenChecker,async(req,res)=>{
+    var room = new Room({"PublicId":uuidv4(),
+                        "BroadcasterId":uuidv4(),
+                        "User":req.user}) 
+        await room.save()
 
-Router.get("/:id/broadcast/:uniqueId",async(req,res)=>{
-    res.render("broadcaster.hbs",{layout:null})    
+        res.redirect(`broadcast/${room.BroadcasterId}`)
 })
 
-Router.get("/:broadcasterId/watch",async(req,res)=>{
-    res.render("viewer.hbs",{layout:null})     
+Router.get("/broadcast/roomPublicId",async(req,res)=>{
+    var room = await Room.find({"PublicId":req.params.roomPublicId})
+    res.render("viewer.hbs",{layout:null,"RoomId":room.id})    
+})
+
+
+Router.get("/:broadcasterId",async(req,res)=>{
+    var room = await Room.find({"broadcasterId":req.params.broadcasterId})
+    res.render("broadcaster.hbs",{layout:null,"RoomId":room.id})     
 })
 
 

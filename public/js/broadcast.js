@@ -9,6 +9,7 @@ const config = {
 
 const socket = io.connect(window.location.origin);
 const video = document.querySelector("video");
+const room = "myroom"
 document.querySelector("video").controls = false;
 // Media contrains
 const constraints = {
@@ -16,7 +17,7 @@ const constraints = {
   // Uncomment to enable audio
   //audio: true
 };
-var room = "myroom"
+
 navigator.mediaDevices
   .getUserMedia(constraints)
   .then(stream => {
@@ -25,6 +26,9 @@ navigator.mediaDevices
   })
   .catch(error => console.error(error));
 
+  socket.on("connect", ()=>{
+    ///make api call to store id 
+  })
 
 
 
