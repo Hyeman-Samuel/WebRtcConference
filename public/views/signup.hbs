@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/public/css/auth_style.css"/>
+</head>
+<body>
+    <div class="container">
+        <div class="row signUp">
+            <div class="col-md-4 offset-md-2">
+                <h1>Sign Up</h1>
+            </div>
+            <div class="register col-md-5">
+            {{#if errors }}
+                {{#each errors }}
+                    <div class="alert alert-secondary" role="alert">{{ this.msg }}</div>
+               {{/each}}
+            {{/if}}
+                <form action="/user/signup"  class="form-group inputField" method="post">
+                    <input class="form-control" id="Username" name="Username" placeholder="Username">
+                    <input class="form-control" id="Password" name="Password" placeholder="Password">
+                    <input class="form-control" id="ConfirmPassword" placeholder="Confirm Password">
+                    <button class="btn-success"  id="Submit" type="submit" >Submit</button>
+                </form>
+               
+
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+
+   // document.getElementById("Submit").setAttribute("disabled",true)
+    document.getElementById("Username").addEventListener("change",function(){
+        check()
+        })
+    document.getElementById("Password").addEventListener("change",function(){
+        check()
+        })
+    document.getElementById("ConfirmPassword").addEventListener("change",function(){
+        check()
+        })
+    
+
+    function check(){
+       var username = document.getElementById("Username").value
+       var password = document.getElementById("Password").value
+       var confirmPassword = document.getElementById("ConfirmPassword").value
+
+        if(ValidateEmail(username) & (password === confirmPassword) & (password !== "")){
+            //document.getElementById("Submit").setAttribute("disabled",false)
+        }
+    }
+
+    function ValidateEmail(mail) {
+        if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(mail))
+        {
+            return (true)
+        }
+            return (false)
+    }
+</script>
+</html>

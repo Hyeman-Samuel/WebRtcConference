@@ -1,0 +1,2 @@
+Local  Uri
+mongodb://localhost:27017/VidCon

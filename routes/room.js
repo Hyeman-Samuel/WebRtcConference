@@ -9,18 +9,20 @@ Router.post("/",TokenChecker,async(req,res)=>{
                         "User":req.user}) 
         await room.save()
 
-        res.redirect(`broadcast/${room.BroadcasterId}`)
+        res.redirect(`room/broadcast/${room.BroadcasterId}`)
 })
 
-Router.get("/broadcast/roomPublicId",async(req,res)=>{
-    var room = await Room.find({"PublicId":req.params.roomPublicId})
-    res.render("viewer.hbs",{layout:null,"RoomId":room.id})    
+Router.get("/watch/:roomPublicId",async(req,res)=>{
+    var room = await Room.findOne({"PublicId":req.params.roomPublicId}).lean()
+  //null check here  
+    res.render("viewer.hbs",{layout:null,"RoomId":room._id})    
 })
 
 
-Router.get("/:broadcasterId",async(req,res)=>{
-    var room = await Room.find({"broadcasterId":req.params.broadcasterId})
-    res.render("broadcaster.hbs",{layout:null,"RoomId":room.id})     
+Router.get("/broadcast/:broadcasterId",async(req,res)=>{
+    var room = await Room.findOne({"BroadcasterId":req.params.broadcasterId}).lean()
+    //null check here
+    res.render("broadcaster.hbs",{layout:null,"RoomId":room._id})     
 })
 
 

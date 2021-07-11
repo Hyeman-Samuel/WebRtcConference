@@ -1,3 +1,4 @@
+const {Room} = require("../models/room")
 
 module.exports = function(server){
     var io = require("socket.io")(server)
@@ -6,20 +7,21 @@ module.exports = function(server){
         console.log(e)
     })
 
-    let broadcaster
+    //let broadcaster
     io.sockets.on("connection", socket => {
-    socket.on("broadcaster", (room) => {
-        broadcaster = socket.id;
+    socket.on("broadcaster", async (room) => {
+        await Room.findOneAndUpdate({"_id":room},{"SocketId":socket.id},{new:true}).lean()
         socket.join(room)
         socket.broadcast.emit("broadcaster");
     });
     
-    socket.on("watcher", () => {
-        socket.to(broadcaster).emit("watcher", socket.id);
+    socket.on("watcher", async (room) => {
+       var room = await Room.findOne({"_id":room})
+        socket.to(room.SocketId).emit("watcher", socket.id);
     });
 
     socket.on("disconnect", () => {
-        socket.to(broadcaster).emit("disconnectPeer", socket.id);
+        socket.emit("disconnectPeer", socket.id);
 
     });
 
@@ -37,9 +39,9 @@ module.exports = function(server){
     socket.to(id).emit("candidate", socket.id, message);
     });
     ///Room
-        socket.on("leave",(room)=>{
-        socket.to(room).emit("watcherleft")
-        })
+    socket.on("leave",(room)=>{
+    socket.to(room).emit("watcherleft")
+    })
     });
 
 }

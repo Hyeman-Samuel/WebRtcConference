@@ -9,6 +9,7 @@ const config = {
 
 const socket = io.connect(window.location.origin);
 const video = document.querySelector("video");
+const room = document.getElementById("RoomId").value;
 //document.getElementById("PlayButton").addEventListener("click",)
 document.querySelector("#PlayButton").addEventListener("click",function(e){
   document.querySelector("video").play();
@@ -51,15 +52,15 @@ socket.on("offer", (id, description,room) => {
   });
   
   socket.on("connect", () => {
-    socket.emit("watcher");
+    socket.emit("watcher",room);
   });
   
   socket.on("broadcaster", () => {
-    socket.emit("watcher");
+    socket.emit("watcher",room);
   });
 
   socket.on("watcherleft", () => {
-   //console.log("user left")
+   console.log("user left")
   });
   
   window.onunload = window.onbeforeunload = () => {

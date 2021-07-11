@@ -9,7 +9,7 @@ const config = {
 
 const socket = io.connect(window.location.origin);
 const video = document.querySelector("video");
-const room = "myroom"
+const room = document.getElementById("RoomId").value;
 document.querySelector("video").controls = false;
 // Media contrains
 const constraints = {
@@ -17,11 +17,11 @@ const constraints = {
   // Uncomment to enable audio
   //audio: true
 };
-
 navigator.mediaDevices
   .getUserMedia(constraints)
   .then(stream => {
     video.srcObject = stream;
+    console.log(room)
     socket.emit("broadcaster",room);
   })
   .catch(error => console.error(error));
@@ -66,7 +66,7 @@ navigator.mediaDevices
   
 
   socket.on("disconnectPeer", id => {
-    //console.log("user left")
+    console.log("user left")
     socket.emit("leave",room);
     peerConnections[id].close();
 

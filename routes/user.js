@@ -4,11 +4,9 @@ const Router= express.Router();
 const { check, validationResult } = require('express-validator');
 const {User,UserRoles}=require('../models/User');
 const jwt = require("jsonwebtoken");
-const { reset } = require('nodemon');
 const LoginFailedRedirectPath = "login"
 const LoginFailedMessage = "Invalid Login Attempt"
 const SignUpFailedRedirectPath = "signup"
-const SignUpFailedMessage = "Invalid SignUp Attempt"
 
 
 
@@ -29,7 +27,7 @@ Router.post("/signup",validateSignUp(),async(req,res)=>{
         return
     }
     const user = new User({"Username":req.body.Username,
-                            "Password":req.body.Password,
+                            "Password":await bcrypt.hash(req.body.Password,10),
                             "Role":UserRoles.User})
     await user.save();
 
@@ -50,20 +48,19 @@ Router.post("/login",validateLogin(),async(req,res)=>{
     var errors = validationResult(req).array()
 
     if(errors.length != 0){
-        FailLoginAttempt(res,errors)
+        FailLoginAttempt(req,res,errors)
         return
     }
-const user = await Users.findOne({"Username":req.body.Username,"Role":UserRoles.User}).lean();
+const user = await User.findOne({"Username":req.body.Username,"Role":UserRoles.User}).lean();
 if(!user){
     var error = {msg:LoginFailedMessage,param:""}
-    FailLoginAttempt(res,[error])
+    FailLoginAttempt(req,res,[error])
      return
 }
 const isPassword= await bcrypt.compare(req.body.Password,user.Password);
-
 if(!isPassword){
     var error = {msg:LoginFailedMessage,param:""}
-    FailLoginAttempt(res,[error])
+    FailLoginAttempt(req,res,[error])
     return
 };
 
@@ -94,14 +91,14 @@ function LogUserIn(res,User){
     res.redirect('/')
 }
 
-function FailLoginAttempt(res,errors){
+function FailLoginAttempt(req,res,errors){
     
     req.session.errors =errors
      res.redirect(LoginFailedRedirectPath);
 }
 
 function validateSignUp(){
-    return [  check('Email', 'Email is required'),
+    return [  check('Username', 'Username is required'),
        check('Password', 'Password is requried')
        .isLength({ min: 1 })
    ]
