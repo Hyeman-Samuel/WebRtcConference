@@ -4,36 +4,70 @@
 	<title>Viewer</title>
 	<meta charset="UTF-8" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.0/dist/bootstrap-table.min.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head>
 <body>
-    <form action="/room" method="POST">
+    <div class="row">
+    <form action="/room" class="col-md-4 offset-5"  method="POST">
         <button class="btn-success" type="submit">Start Conference</button>
     </form>
-	<div class="container-fluid py-2">
-    <h2 class="font-weight-light">Bootstrap 4 Horizontal Scrolling Cards with Flexbox</h2>
-    <div class="d-flex flex-row flex-nowrap">
-        <div class="card card-body">Card</div>
-        <div class="card card-body">Card</div>
-        <div class="card card-body">Card</div>
-        <div class="card card-body">Card</div>
-        <div class="card card-body">Card</div>
-        <div class="card card-body">Card</div>
-        <div class="card card-body">Card</div>
-        <div class="card card-body">Card</div>
-        <div class="card card-body">Card</div>
-        <div class="card card-body">Card</div>
-        <div class="card card-body">Card</div>
-        <div class="card card-body">Card</div>
-        <div class="card card-body">Card</div>
-        <div class="card card-body">Card</div>
     </div>
-</div>
+    <div class="row">
+                            <div class="col-md-12">
+                                <div class="main-card mb-3 card">
+                                    <div class="card-header">Conferences
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table
+                                        class="align-middle mb-0 table table-borderless table-striped table-hover"
+                                        id="ConferenceTable"  
+                                        data-show-header="true" 
+                                        data-pagination="true"
+                                        data-id-field="name"
+                                        {{!-- data-search="true" --}}
+                                        {{!-- data-show-toggle="true" --}}
+                                        data-page-list="[5, 10, 25, 50, 100, ALL]"
+                                        data-page-size="5">
+                                            <thead>
+                                            <tr>
+                                                <th data-formatter="IndexFormatter" class="text-center">Title</th>
+                                                <th data-field="PublicId" data-formatter="LinkFormatter">Conference</th>
+                                            </tr>
+                                            </thead>
+                                    <tbody>
+                                    </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+	
 </body>
-<style>
-    .card-body {
-    min-height: 300px;
-    min-width: 300px;
-    margin-right: 5px;
+<script type="text/javascript" src="/public/js/api_caller.js"></script>
+<script>
+    GetDataFromServer("/room","Conferences",
+    function(data){
+    $(function () {
+        console.log(data)
+        $('#ConferenceTable').bootstrapTable({
+        data: data
+        });
+    })
+})
+
+function LinkFormatter(value){
+return `<a href="/room/watch/${value}"> Watch </a>`
 }
-</style>
+
+function IndexFormatter(data,value){
+return `<h4> Conference #${value._id} </h4>`
+}
+
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.18.0/dist/bootstrap-table.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+
 </html>

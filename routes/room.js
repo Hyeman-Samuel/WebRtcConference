@@ -18,10 +18,17 @@ Router.get("/watch/:roomPublicId",async(req,res)=>{
     res.render("viewer.hbs",{layout:null,"RoomId":room._id})    
 })
 
+Router.get("/",async(req,res)=>{
+    var rooms = await Room.find({"IsActive":true}).lean()
+  //null check here  
+    res.send({"code":1,"data":rooms})    
+})
+
 
 Router.get("/broadcast/:broadcasterId",async(req,res)=>{
     var room = await Room.findOne({"BroadcasterId":req.params.broadcasterId}).lean()
     //null check here
+    console.log(room.PublicId)
     res.render("broadcaster.hbs",{layout:null,"RoomId":room._id})     
 })
 

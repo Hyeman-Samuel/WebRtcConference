@@ -20,9 +20,9 @@ module.exports = function(server){
         socket.to(room.SocketId).emit("watcher", socket.id);
     });
 
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
         socket.emit("disconnectPeer", socket.id);
-
+        await Room.findOneAndUpdate({"SocketId":socket.id},{"IsActive":false})
     });
 
     socket.on("offer", (id, message,room) => {
