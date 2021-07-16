@@ -12,9 +12,8 @@ const http = require("http")
 
 
 
-    var app = Express()
+var app = Express()
     app.use(Express.json());
-    app.set('port', process.env.PORT || 3000)
 
 var Server = http.createServer(app)
 if (process.env.NODE_ENV !== 'production') {
@@ -44,7 +43,7 @@ app.get("/errorlogs",async (req,res,)=>{
   })
 app.use(ex_middleware)
 
-Server.listen(app.get('port'),function(){
+Server.listen(process.env.PORT || 3000,function(){
     //Logger.info(`server listening on port ${app.get('port')}`)
 });
 //app.listen(app.get('port'), function() {});
