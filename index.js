@@ -11,15 +11,11 @@ const http = require("http")
 
 
 
-function createApplication(){
-    var application = Express()
-    application.use(Express.json());
-    application.set('port', process.env.PORT || 3000)
-    return application
-}
 
+    var app = Express()
+    app.use(Express.json());
+    app.set('port', process.env.PORT || 3000)
 
-var app = createApplication()
 var Server = http.createServer(app)
 if (process.env.NODE_ENV !== 'production') {
     Logger.SetConsoleLogger()
