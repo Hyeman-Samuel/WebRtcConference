@@ -21,7 +21,6 @@ navigator.mediaDevices
   .getUserMedia(constraints)
   .then(stream => {
     video.srcObject = stream;
-    console.log(room)
     socket.emit("broadcaster",room);
   })
   .catch(error => console.error(error));
