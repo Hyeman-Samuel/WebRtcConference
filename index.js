@@ -43,7 +43,6 @@ app.get("/errorlogs",async (req,res,)=>{
 app.use(ex_middleware)
 
 Server.listen(process.env.PORT,function(){
-    console.log("listening")
-    Logger.info(`server listening on port ${app.get('port')}`)
+    //Logger.info(`server listening on port ${app.get('port')}`)
 });
 //app.listen(app.get('port'), function() {});
