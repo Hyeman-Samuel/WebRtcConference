@@ -23,8 +23,12 @@ module.exports = function(server){
     socket.on("disconnect", async () => {
         socket.emit("disconnectPeer", socket.id);
         await Room.findOneAndUpdate({"SocketId":socket.id},{"IsActive":false})
+        ///emit to all sockets in this room
     });
 
+    // socket.on("disconnecting",async () =>{
+
+    // })
     socket.on("offer", (id, message,room) => {
         socket.to(id).emit("offer", socket.id, message,room);
     });
