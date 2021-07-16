@@ -1,4 +1,4 @@
-const createExpressApp = require("./middleware/createApplication")
+//const createExpressApp = require("./middleware/createApplication")
 const handlebars = require("./middleware/useHandleBars")
 const ex_middleware = require("./middleware/exception_middleware")
 const parser = require("./middleware/parser")
@@ -10,10 +10,15 @@ const http = require("http")
 
 
 
+function createApplication(){
+    var application = Express()
+    application.use(Express.json());
+    application.set('port', process.env.PORT || 3000)
+    return application
+}
 
 
-
-var app = createExpressApp()
+var app = createApplication()
 var Server = http.createServer(app)
 if (process.env.NODE_ENV !== 'production') {
     Logger.SetConsoleLogger()
@@ -42,7 +47,9 @@ app.get("/errorlogs",async (req,res,)=>{
   })
 app.use(ex_middleware)
 
-Server.listen(process.env.PORT,function(){
+Server.listen(app.get('port'),function(){
     //Logger.info(`server listening on port ${app.get('port')}`)
 });
 //app.listen(app.get('port'), function() {});
+
+
