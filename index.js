@@ -37,6 +37,9 @@ const home = require("./routes/home")
 app.use("/room",room)
 app.use("/user",user)
 app.use("/",home)
+app.get("/errorlogs",async (req,res,)=>{
+    res.sendFile(`${__dirname}/error.log`)
+  })
 app.use(ex_middleware)
 
 Server.listen(app.get('port'),function(){
