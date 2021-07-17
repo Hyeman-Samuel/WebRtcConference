@@ -32,7 +32,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 parser(app)
 io(Server)
-//session(app)
+session(app)
 handlebars(app,__dirname)
 mongoDb()
 
@@ -47,7 +47,7 @@ app.get("/errorlogs",async (req,res,)=>{
   })
 app.use(ex_middleware)
 
-app.listen(app.get('port'),'0.0.0.0',function(err){
+app.listen(app.get('port'),function(err){
     if(err){
         //Logger.info(`failed to connect ${err}`)  
         console.log(err)
