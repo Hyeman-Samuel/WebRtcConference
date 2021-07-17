@@ -12,6 +12,12 @@ const http = require("http")
 
 
 
+const room = require("./routes/room")
+const user = require("./routes/user")   
+const home = require("./routes/home")  
+
+
+
 var app = Express()
     app.use(Express.json());
     app.set('port', process.env.PORT || 3000)
@@ -26,15 +32,13 @@ if (process.env.NODE_ENV !== 'production') {
 
 parser(app)
 io(Server)
-session(app)
+//session(app)
 handlebars(app,__dirname)
 mongoDb()
 
 
 
-const room = require("./routes/room")
-const user = require("./routes/user")   
-const home = require("./routes/home")  
+
 app.use("/room",room)
 app.use("/user",user)
 app.use("/",home)
