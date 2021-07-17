@@ -1,4 +1,4 @@
-const session = require('express-session');
+const session = require('cookie-session');
 var back = require('express-back');
 
 module.exports=function (app){
