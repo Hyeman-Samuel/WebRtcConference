@@ -15,6 +15,7 @@ const http = require("http")
 var app = Express()
     app.use(Express.json());
     app.set('port', process.env.PORT || 3000)
+    console.log(process.env.PORT)
 var Server = http.createServer(app)
 if (process.env.NODE_ENV !== 'production') {
     Logger.SetConsoleLogger()
