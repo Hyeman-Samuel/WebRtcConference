@@ -43,7 +43,10 @@ app.get("/errorlogs",async (req,res,)=>{
   })
 app.use(ex_middleware)
 
-Server.listen(app.get('port'),process.env.HOST,function(){
+Server.listen(app.get('port'),process.env.HOST,function(err){
+    if(err){
+        Logger.info(`failed to connect ${err}`)  
+    }
     Logger.info(`server listening on port ${app.get('port')}`)
 });
 //app.listen(app.get('port'), function() {});
