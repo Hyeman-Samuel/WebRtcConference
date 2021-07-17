@@ -43,7 +43,7 @@ app.get("/errorlogs",async (req,res,)=>{
   })
 app.use(ex_middleware)
 
-Server.listen(app.get('port'),function(){
+Server.listen(app.get('port'),'0.0.0.0',function(){
     Logger.info(`server listening on port ${app.get('port')}`)
 });
 //app.listen(app.get('port'), function() {});
