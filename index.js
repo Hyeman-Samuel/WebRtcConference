@@ -47,7 +47,7 @@ app.get("/errorlogs",async (req,res,)=>{
   })
 app.use(ex_middleware)
 
-app.listen(app.get('port'),function(err){
+Server.listen(app.get('port'),function(err){
     if(err){
         //Logger.info(`failed to connect ${err}`)  
         console.log(err)

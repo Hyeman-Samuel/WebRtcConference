@@ -10,7 +10,7 @@ module.exports = function(server){
     //let broadcaster
     io.sockets.on("connection", socket => {
     socket.on("broadcaster", async (room) => {
-        await Room.findOneAndUpdate({"_id":room},{"SocketId":socket.id},{new:true}).lean()
+        await Room.findOneAndUpdate({"_id":room},{"SocketId":socket.id}).lean()
         socket.join(room)
         socket.broadcast.emit("broadcaster");
     });
@@ -22,19 +22,23 @@ module.exports = function(server){
 
     socket.on("disconnect", async () => {
         socket.emit("disconnectPeer", socket.id);
-        await Room.findOneAndUpdate({"SocketId":socket.id},{"IsActive":false})
+        //await Room.findOneAndUpdate({"SocketId":socket.id},{"IsActive":false})
         ///emit to all sockets in this room
     });
 
-    // socket.on("disconnecting",async () =>{
-
-    // })
+     socket.on("disconnecting",async () =>{
+        //console.log(socket.rooms)
+        await Room.findOneAndUpdate({"SocketId":socket.id},{"IsActive":false})
+       var rooms = Array.from(socket.rooms)
+       socket.to(rooms[1]).emit("watcherleft")
+     })
     socket.on("offer", (id, message,room) => {
         socket.to(id).emit("offer", socket.id, message,room);
     });
 
     socket.on("answer", (id, message,room) => {
     socket.join(room)
+    //console.log(socket.rooms)
     socket.to(id).emit("answer", socket.id, message);
     });
 
