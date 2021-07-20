@@ -1,3 +1,3 @@
 # WebRtcConference
 
-A video conference web app build with webrtc and socket.io
+A video conference web app built with webrtc and socket.io
