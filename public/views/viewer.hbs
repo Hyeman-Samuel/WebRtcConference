@@ -7,7 +7,72 @@
 </head>
 <body>
 	<input id="RoomId" hidden value="{{RoomId}}"/>
-<video playsinline style="pointer-events: none;"></video>
+<div class="flex main">
+	<video class="video" playsinline style="pointer-events: none;"></video>
+    <div class="chat">
+       <div class="chat-messages">
+        <div class="chat">
+          <div class="chat-content clearfix">
+            <span class="friend last">
+                  Hi, How are You?
+                  <span class="time">
+                    7:30 PM
+                  </span>
+            </span>
+            <span class="you first">
+                  Hi, I am fine.
+                  How about you?
+                  <span class="time">
+                    7:31 PM
+                  </span>
+            </span>
+            <span class="you last">
+                  lets meet,
+                  this sunday! testing to see what happens
+                  <span class="time">
+                    7:31 PM
+                  </span>
+            </span>
+                       <span class="you last">
+                  lets meet,
+                  this sunday! testing to see what happens
+                  <span class="time">
+                    7:31 PM
+                  </span>
+            </span>           <span class="you last">
+                  lets meet,
+                  this sunday! testing to see what happens
+                  <span class="time">
+                    7:31 PM
+                  </span>
+            </span>           <span class="you last">
+                  lets meet,
+                  this sunday! testing to see what happens
+                  <span class="time">
+                    7:31 PM
+                  </span>
+            </span>           <span class="you last">
+                  lets meet,
+                  this sunday! testing to see what happens
+                  <span class="time">
+                    7:31 PM
+                  </span>
+            </span>
+          </div>
+
+          <div class="msg-box">
+            <input type="text" class="ip-msg" placeholder="type something.." />
+            <span class="btn-group">
+                  <i class="fa fa-paper-plane"></i>
+                  <i class="fa fa-paperclip"></i>
+                </span>
+          </div>
+
+        </div>
+      </div> 
+    </div>
+  </div>
+
 <button id="PlayButton">Join broadcast</button>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js" integrity="sha512-iZIBSs+gDyTH0ZhUem9eQ1t4DcEn2B9lHxfRMeGQhyNdSUz+rb+5A3ummX6DQTOIs1XK0gOteOg/LPtSo9VJ+w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="/public/js/viewer.js"></script>
