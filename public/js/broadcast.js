@@ -6,11 +6,10 @@ const config = {
     }
   ]
 };
-
 const socket = io.connect(window.location.origin);
 const video = document.querySelector("video");
 const room = document.getElementById("RoomId").value;
-const userId = document.getElementById("UserId").value;
+//const userId = document.getElementById("UserId").value;
 document.querySelector("video").controls = false;
 // Media contrains
 const constraints = {
