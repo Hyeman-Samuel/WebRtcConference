@@ -39,6 +39,10 @@ Router.post("/signup",validateSignUp(),async(req,res)=>{
 
 
 Router.get("/login",async(req,res)=>{
+    if(req.cookies.authcookie){
+        res.redirect("/")
+        return;
+    }
     res.render('login.hbs',{layout:false,errors:req.session.errors})
     req.session.errors = null;
 })
