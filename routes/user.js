@@ -3,6 +3,7 @@ const bcrypt =require("bcryptjs");
 const Router= express.Router();
 const { check, validationResult } = require('express-validator');
 const {User,UserRoles}=require('../models/user');
+const {Login}=require("../models/logins");
 const jwt = require("jsonwebtoken");
 const LoginFailedRedirectPath = "login"
 const LoginFailedMessage = "Invalid Login Attempt"
@@ -26,7 +27,7 @@ Router.post("/signup",validateSignUp(),async(req,res)=>{
         res.redirect(SignUpFailedRedirectPath);
         return
     }
-    const user = new User({"Username":req.body.Username,
+    const user = new User({"Username":req.body.Username.toLowerCase(),
                             "Password":await bcrypt.hash(req.body.Password,10),
                             "Role":UserRoles.User})
     await user.save();
@@ -51,7 +52,7 @@ Router.post("/login",validateLogin(),async(req,res)=>{
         FailLoginAttempt(req,res,errors)
         return
     }
-const user = await User.findOne({"Username":req.body.Username,"Role":UserRoles.User}).lean();
+const user = await User.findOne({"Username":req.body.Username.toLowerCase(),"Role":UserRoles.User});
 if(!user){
     var error = {msg:LoginFailedMessage,param:""}
     FailLoginAttempt(req,res,[error])
@@ -63,6 +64,13 @@ if(!isPassword){
     FailLoginAttempt(req,res,[error])
     return
 };
+    const logins = await Login.find({expiringDate: { $gt:Math.floor(Date.now() / 1000)},email:req.body.Username.toLowerCase()}).lean()
+    if(logins.length !== 0){
+    var error = {msg:"already logged in on another device",param:""}
+    FailLoginAttempt(req,res,[error])
+    return
+    }
+
 
     LogUserIn(res,user)
 })
@@ -86,13 +94,18 @@ module.exports = Router
 
 function LogUserIn(res,User){
     const token = jwt.sign({user:User},'secretKey')
-    res.cookie('authcookie',token,{maxAge:900000,httpOnly:true}) 
-    
+    const sessionDurationInMilliSeconds = 60000;
+    const newLogin = new Login({
+        "token":token,
+        "expiringDate":Math.floor(Date.now() / 1000) + (sessionDurationInMilliSeconds/1000),
+        "email":User.Username.toLowerCase()
+        })
+        newLogin.save()
+    res.cookie('authcookie',token,{maxAge:sessionDurationInMilliSeconds,httpOnly:true})   
     res.redirect('/')
 }
 
 function FailLoginAttempt(req,res,errors){
-    
     req.session.errors =errors
      res.redirect(LoginFailedRedirectPath);
 }
