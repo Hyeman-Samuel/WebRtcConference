@@ -1,14 +1,17 @@
 const express = require('express');
 const bcrypt =require("bcryptjs");
 const Router= express.Router();
-const { check, validationResult } = require('express-validator');
+const {check, validationResult } = require('express-validator');
 const {User,UserRoles}=require('../models/user');
+const {PasswordResetToken}=require('../models/passwordResetToken');
 const {Login}=require("../models/logins");
+const {SendHbsEmail,SendTextEmail}=require("../utility/mailer");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const LoginFailedRedirectPath = "login"
 const LoginFailedMessage = "Invalid Login Attempt"
 const SignUpFailedRedirectPath = "signup"
-
+const PasswordResetRedirectPath = ""
 
 
 
@@ -80,6 +83,105 @@ if(!isPassword){
 })
 
 
+Router.get("/logout",async (req,res)=>{
+        if(req.cookies.authid){
+        try {
+            await Login.findByIdAndDelete(req.cookies.authid) 
+        } catch (error) {
+            res.redirect('back');
+        return 
+        }             
+    }
+        req.cookies = null;
+        res.redirect("/");
+})
+
+
+
+Router.get("/forgotpassword",async (req,res)=>{
+    res.render('forgotpassword.hbs',{layout:false,errors:req.session.errors})
+    req.session.errors = null
+})
+
+Router.post("/forgotpassword",async (req,res)=>{
+    const user = await User.findOne({"Username":req.body.email.toLowerCase()});
+    if(user == null){
+        var error = {msg:"User not found",param:""}
+        req.session.errors =[error]
+        res.redirect("/user/forgotpassword");
+        return
+    }
+    await PasswordResetToken.findOneAndDelete({"userId":user.id});
+    var token = crypto.randomBytes(32).toString("hex");
+    var hash = await bcrypt.hash(token, 10);
+    const passwordResetToken = new PasswordResetToken({
+    "userId":user.id,
+    "hash":hash
+    })
+    passwordResetToken.save();
+    await SendHbsEmail('./public/views/emailTemplate/passwordResetEmail.hbs',{domainUrl:req.hostname,token:token,user:user.id},user.Username,"Reset Password")
+
+    res.redirect("/user/forgotpassword");
+})
+
+
+Router.get("/resetpassword",async (req,res)=>{
+    if(!req.query.token){
+        var error = {msg:"this link is invalid",param:""}
+        req.session.errors =[error]
+        res.redirect("/user/forgotpassword")
+        return
+    }
+    const passwordResetToken = await PasswordResetToken.findOne({"userId":req.query.user})
+    if(passwordResetToken == null){
+        var error = {msg:"this link is expired",param:""}
+        req.session.errors =[error]
+        res.redirect("/user/forgotpassword")
+        return
+    }
+    const isValid = await bcrypt.compare(req.query.token,passwordResetToken.hash)
+    if(!isValid){
+        var error = {msg:"this link is invalid",param:""}
+        req.session.errors =[error]
+        res.redirect("/user/forgotpassword")
+        return
+    }
+    res.render('passwordReset.hbs',{layout:false,errors:req.session.errors,user:req.query.user,token:req.query.token})
+    req.session.errors = null
+})
+
+
+
+Router.post("/resetpassword",async (req,res)=>{
+    if(!req.body.token){
+        var error = {msg:"this link is invalid",param:""}
+        req.session.errors =[error]
+        res.redirect("/forgotpassword")
+        return
+    }
+    const passwordResetToken = await PasswordResetToken.findOne({"userId":req.body.user})
+    if(passwordResetToken == null){
+        var error = {msg:"this link is invalid",param:""}
+        req.session.errors =[error]
+        res.redirect("/forgotpassword")
+        return
+    }
+    const isValid = await bcrypt.compare(req.body.token,passwordResetToken.hash)
+    if(!isValid){
+        var error = {msg:"this link is invalid",param:""}
+        req.session.errors =[error]
+        res.redirect("/forgotpassword")
+        return
+    }
+
+    var newHash = await bcrypt.hash(req.body.password, 10);
+   var user = await User.findOneAndUpdate({"_id":req.body.user},{"Password":newHash},{"new":true});
+
+    await passwordResetToken.deleteOne();
+
+    LogUserIn(res,user);
+})
+
 
 
 
@@ -105,7 +207,9 @@ function LogUserIn(res,User){
         "email":User.Username.toLowerCase()
         })
         newLogin.save()
-    res.cookie('authcookie',token,{maxAge:sessionDurationInMilliSeconds,httpOnly:true})   
+    const cookieOptions = {maxAge:sessionDurationInMilliSeconds,httpOnly:true}
+    res.cookie('authcookie',token,cookieOptions); 
+    res.cookie('authid',newLogin._id,cookieOptions);  
     res.redirect('/')
 }
 
